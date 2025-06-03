@@ -1,0 +1,19 @@
+import pandas as pd,matplotlib.pyplot as plt, numpy as np, seaborn as sns
+from sklearn.datasets import fetch_california_housing
+df=pd.DataFrame(*fetch_california_housing(return_X_y=True),columns=fetch_california_housing().feature_names)
+df['MedHousVal']= fetch_california_housing().target
+df.hist(bins=30, figsize=(12,10),color='skyblue',edgecolor='k')
+plt.tight_layout(), plt.show()
+plt.figure(figsize=(12,10))
+for i ,c in enumerate(df.columns, 1):
+    plt.subplot(4,3,i)
+    sns.boxplot(y=df[c],color='lightcoral')
+    plt.title(c)
+plt.tight_layout(), plt.show()
+print(f"Outlier : \n ")
+for c in df.columns:
+    Q1,Q3= df[c].quantile([0.25,0.75])
+    IRQ = Q3-Q1
+    lower,upper = Q1-1.5 * IRQ, Q3+1.5 * IRQ
+    outlier = df[(df[c]<lower)|(df[c]>upper)]
+    print(f"{c} : {len(outlier)} outlier, bound: {lower:.2f},{upper:.2f}")
